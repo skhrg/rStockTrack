@@ -7,14 +7,42 @@ from datetime import date
 PATH = "../personal-site/_posts/spacs/"
 
 def save_md(spacs):
-    spacs = [[k]+v for k, v in spacs.items()]
+    spacs = np.array([[k]+v for k, v in spacs.items()])
     today = str(date.today())
-
-    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n--- \n\n# r/SPACs summary for " + today + " \n\nTICKER|POSTS|UPVOTES|VALUE\n ---|---|---|---\n"
+    
+    spacs = spacs[spacs[:,0].argsort()]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n--- \n\n# r/SPACs summary for " + today + " \n\nTICKER|[POSTS](../spacs-summary-posts)|[UPVOTES](../spacs-summary-upvotes)|[VALUE](../spacs-summary-value)\n ---|---|---|---\n"
     with open(PATH+today+"-spacs-summary.md", "w") as f:
         f.write(header)
         f.close()
     with open(PATH+today+"-spacs-summary.md", "ab") as f:
+        np.savetxt(f, spacs, fmt='%s', delimiter="|")
+        f.close()
+
+    spacs = spacs[spacs[:,1].astype(np.int).argsort()[::-1]]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n hidden: true \n--- \n\n# r/SPACs summary for " + today + " \n\n[TICKER](../spacs-summary)|POSTS|[UPVOTES](../spacs-summary-upvotes)|[VALUE](../spacs-summary-value)\n ---|---|---|---\n"
+    with open(PATH+today+"-spacs-summary-posts.md", "w") as f:
+        f.write(header)
+        f.close()
+    with open(PATH+today+"-spacs-summary-posts.md", "ab") as f:
+        np.savetxt(f, spacs, fmt='%s', delimiter="|")
+        f.close()
+
+    spacs = spacs[spacs[:,2].astype(np.int).argsort()[::-1]]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n hidden: true \n--- \n\n# r/SPACs summary for " + today + " \n\n[TICKER](../spacs-summary)|[POSTS](../spacs-summary-posts)|UPVOTES|[VALUE](../spacs-summary-value)\n ---|---|---|---\n"
+    with open(PATH+today+"-spacs-summary-upvotes.md", "w") as f:
+        f.write(header)
+        f.close()
+    with open(PATH+today+"-spacs-summary-upvotes.md", "ab") as f:
+        np.savetxt(f, spacs, fmt='%s', delimiter="|")
+        f.close()
+
+    spacs = spacs[spacs[:,3].astype(np.float).argsort()[::-1]]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n hidden: true \n--- \n\n# r/SPACs summary for " + today + " \n\n[TICKER](../spacs-summary)|[POSTS](../spacs-summary-posts)|[UPVOTES](../spacs-summary-upvotes)|VALUE\n ---|---|---|---\n"
+    with open(PATH+today+"-spacs-summary-value.md", "w") as f:
+        f.write(header)
+        f.close()
+    with open(PATH+today+"-spacs-summary-value.md", "ab") as f:
         np.savetxt(f, spacs, fmt='%s', delimiter="|")
         f.close()
 
