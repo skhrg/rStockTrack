@@ -4,7 +4,7 @@ from yahoo_fin import stock_info as si
 import numpy as np
 from datetime import date
 
-PATH = "../personal-site/_posts/"
+PATH = "../personal-site/_posts/spacs/"
 
 def save_md(spacs):
     spacs = [[k]+v for k, v in spacs.items()]
