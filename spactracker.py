@@ -3,76 +3,84 @@ import praw
 from yahoo_fin import stock_info as si
 import numpy as np
 from datetime import date
+import argparse
 
-PATH = "../personal-site/_posts/spacs/"
+PATH = "../personal-site/_posts/"
 
-def save_md(spacs):
-    spacs = np.array([[k]+v for k, v in spacs.items()])
+def save_md(stocks, sub):
+    path = PATH + sub + "/"
+
+    stocks = np.array([[k]+v for k, v in stocks.items()])
     today = str(date.today())
     
-    spacs = spacs[spacs[:,0].argsort()]
-    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n--- \n\n# r/SPACs summary for " + today + " \n\nTICKER|[POSTS](../spacs-summary-posts)|[UPVOTES](../spacs-summary-upvotes)|[VALUE](../spacs-summary-value)\n ---|---|---|---\n"
-    with open(PATH+today+"-spacs-summary.md", "w") as f:
+    stocks = stocks[stocks[:,0].argsort()]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: " + sub + " \n--- \n\n# r/" + sub + " summary for " + today + " \n\nTICKER|[POSTS](../" + sub + "-summary-posts)|[UPVOTES](../" + sub + "-summary-upvotes)|[VALUE](../" + sub + "-summary-value)\n ---|---|---|---\n"
+    with open(path+today+"-" + sub + "-summary.md", "w") as f:
         f.write(header)
         f.close()
-    with open(PATH+today+"-spacs-summary.md", "ab") as f:
-        np.savetxt(f, spacs, fmt='%s', delimiter="|")
+    with open(path+today+"-" + sub + "-summary.md", "ab") as f:
+        np.savetxt(f, stocks, fmt='%s', delimiter="|")
         f.close()
 
-    spacs = spacs[spacs[:,1].astype(np.int).argsort()[::-1]]
-    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n hidden: true \n--- \n\n# r/SPACs summary for " + today + " \n\n[TICKER](../spacs-summary)|POSTS|[UPVOTES](../spacs-summary-upvotes)|[VALUE](../spacs-summary-value)\n ---|---|---|---\n"
-    with open(PATH+today+"-spacs-summary-posts.md", "w") as f:
+    stocks = stocks[stocks[:,1].astype(np.int).argsort()[::-1]]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: " + sub + " \n hidden: true \n--- \n\n# r/" + sub + " summary for " + today + " \n\n[TICKER](../" + sub + "-summary)|POSTS|[UPVOTES](../" + sub + "-summary-upvotes)|[VALUE](../" + sub + "-summary-value)\n ---|---|---|---\n"
+    with open(path+today+"-" + sub + "-summary-posts.md", "w") as f:
         f.write(header)
         f.close()
-    with open(PATH+today+"-spacs-summary-posts.md", "ab") as f:
-        np.savetxt(f, spacs, fmt='%s', delimiter="|")
+    with open(path+today+"-" + sub + "-summary-posts.md", "ab") as f:
+        np.savetxt(f, stocks, fmt='%s', delimiter="|")
         f.close()
 
-    spacs = spacs[spacs[:,2].astype(np.int).argsort()[::-1]]
-    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n hidden: true \n--- \n\n# r/SPACs summary for " + today + " \n\n[TICKER](../spacs-summary)|[POSTS](../spacs-summary-posts)|UPVOTES|[VALUE](../spacs-summary-value)\n ---|---|---|---\n"
-    with open(PATH+today+"-spacs-summary-upvotes.md", "w") as f:
+    stocks = stocks[stocks[:,2].astype(np.int).argsort()[::-1]]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: " + sub + " \n hidden: true \n--- \n\n# r/" + sub + " summary for " + today + " \n\n[TICKER](../" + sub + "-summary)|[POSTS](../" + sub + "-summary-posts)|UPVOTES|[VALUE](../" + sub + "-summary-value)\n ---|---|---|---\n"
+    with open(path+today+"-" + sub + "-summary-upvotes.md", "w") as f:
         f.write(header)
         f.close()
-    with open(PATH+today+"-spacs-summary-upvotes.md", "ab") as f:
-        np.savetxt(f, spacs, fmt='%s', delimiter="|")
+    with open(path+today+"-" + sub + "-summary-upvotes.md", "ab") as f:
+        np.savetxt(f, stocks, fmt='%s', delimiter="|")
         f.close()
 
-    spacs = spacs[spacs[:,3].astype(np.float).argsort()[::-1]]
-    header = "--- \n layout: post \n title: Summary for " + today + "\n category: spacs \n hidden: true \n--- \n\n# r/SPACs summary for " + today + " \n\n[TICKER](../spacs-summary)|[POSTS](../spacs-summary-posts)|[UPVOTES](../spacs-summary-upvotes)|VALUE\n ---|---|---|---\n"
-    with open(PATH+today+"-spacs-summary-value.md", "w") as f:
+    stocks = stocks[stocks[:,3].astype(np.float).argsort()[::-1]]
+    header = "--- \n layout: post \n title: Summary for " + today + "\n category: " + sub + " \n hidden: true \n--- \n\n# r/" + sub + " summary for " + today + " \n\n[TICKER](../" + sub + "-summary)|[POSTS](../" + sub + "-summary-posts)|[UPVOTES](../" + sub + "-summary-upvotes)|VALUE\n ---|---|---|---\n"
+    with open(path+today+"-" + sub + "-summary-value.md", "w") as f:
         f.write(header)
         f.close()
-    with open(PATH+today+"-spacs-summary-value.md", "ab") as f:
-        np.savetxt(f, spacs, fmt='%s', delimiter="|")
+    with open(path+today+"-" + sub + "-summary-value.md", "ab") as f:
+        np.savetxt(f, stocks, fmt='%s', delimiter="|")
         f.close()
 
-def get_spacs(reddit):
-    spacs = {}
-    not_spacs = []
+def get_stocks(reddit, sub):
+    stocks = {}
+    not_stocks = []
 
-    for submission in reddit.subreddit("SPACs").top("day", limit=100):
+    for submission in reddit.subreddit(sub).top("day", limit=100):
         all_words = submission.title + ' ' + submission.selftext
         all_words = re.sub(r"[^\w]", " ",  all_words)
         all_words = re.findall(r"([A-Z]+[^a-z\W\d])", all_words)
         for word in all_words:
-            if word in spacs.keys():
-                spacs[word][0] += 1
-                spacs[word][1] += submission.score
+            if word in stocks.keys():
+                stocks[word][0] += 1
+                stocks[word][1] += submission.score
             else:
-                if word in not_spacs:
+                if word in not_stocks:
                     continue
                 try:
                     price = si.get_live_price(word)
                     if np.isnan(price):
-                        not_spacs.append(word)
+                        not_stocks.append(word)
                         continue
-                    spacs[word] = [0,0,0]
-                    spacs[word][0] = 1
-                    spacs[word][1] = submission.score
-                    spacs[word][2] = price
+                    stocks[word] = [0,0,0]
+                    stocks[word][0] = 1
+                    stocks[word][1] = submission.score
+                    stocks[word][2] = price
                 except:
-                    not_spacs.append(word)
-    return spacs
+                    not_stocks.append(word)
+    return stocks
+
+parser = argparse.ArgumentParser()
+parser.add_argument("subreddit", type = str, help = "subreddit to scrape tickers from")
+args = parser.parse_args()
+sub = args.subreddit
 
 reddit = praw.Reddit(
         client_id="ccIRAkiGGdLWQw",
@@ -80,5 +88,5 @@ reddit = praw.Reddit(
         user_agent="linux:com.saianeesh.spacs:v1.0 (by /u/lordskh)"
         )
 
-spacs = get_spacs(reddit)
-save_md(spacs)
+stocks = get_stocks(reddit, sub)
+save_md(stocks, sub)
