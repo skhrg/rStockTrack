@@ -1,8 +1,11 @@
-# rSPACs
+# rStockTrack
 
-A simple script to get the tickers mentioned in today's top 100 posts of r/SPACs and output a table containing each ticker, number of posts it is mentioned in, total upvotes on the post, and the price.
+A simple script to get the tickers mentioned in today's top 100 posts of any subreddit and output a table containing each ticker, number of posts it is mentioned in, total upvotes on the post, and the price.
 
 The output file is a markdown file that is formatted as a Jekyll post for ease of generating a static site to view the data.
 
+## Usage
+`python stocktracker.py SUBREDDIT_NAME`
+
 ## Shortcomings
-This script is currently unable to differentiate SPACs from non SPAC tickers mentioned (or for that matter uppercase words that just happen to be a ticker). This may be fixed in the future.
+This script is currently unable to differentiate words that happen to be tickers from actual tickers mentioned. This may be fixed in the future.
